@@ -3,7 +3,7 @@
 Documenting my path to becoming a SOC analyst.
 
 ## Certifications & Badges
-[![LetsDefend SOC Fundamentals](badges/letsdefend-soc-fundamentals.png)](https://app.letsdefend.io/my-rewards/detail/7ea9e3a1-22ae-470b-a7eb-78e31978d75d)
+[![LetsDefend SOC Fundamentals](https://app.letsdefend.io/_next/image?url=https%3A%2F%2Fapp-ld-img.s3.amazonaws.com%2Fbadge%2Fsoc-fundamentals-badge-0101ea06-51bf-4f94-8e2f-1b363f78dbb2.png&w=1200&q=75)](https://app.letsdefend.io/my-rewards/detail/7ea9e3a1-22ae-470b-a7eb-78e31978d75d)
 
 **LetsDefend: SOC Fundamentals** (completed Nov 7, 2026)
 
