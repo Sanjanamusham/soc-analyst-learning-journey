@@ -16,8 +16,3 @@ Documenting my path to becoming a SOC analyst.
 ## Notes
 - [SOC Types and Roles](notes/01-soc-types-and-roles.md)
 - [SIEM and Analyst Relationship](notes/02-siem-and-analyst.md)
-
-## Next Steps
-- [ ] Build a Wazuh or Security Onion home lab
-- [ ] Write 5 alert investigation reports
-- [ ] Study for Security+ / BTL1
