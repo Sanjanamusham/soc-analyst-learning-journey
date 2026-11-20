@@ -318,6 +318,122 @@ This activity was performed on Windows Server 2022 inside an isolated VMware Wor
 
 
 
+\# Incident 01 — SPL Queries
+
+
+
+\## 1. Search Failed Authentication Events
+
+
+
+```spl
+
+index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
+
+```
+
+
+
+\## 2. Display Failed Authentication Event Details
+
+
+
+```spl
+
+index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
+
+| table \\\_time host Account\\\_Name TargetUserName Source\\\_Network\\\_Address IpAddress Logon\\\_Type Failure\\\_Reason
+
+| sort - \\\_time
+
+```
+
+
+
+\## 3. Count Failed Logons by Host
+
+
+
+```spl
+
+index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
+
+| stats count by host
+
+```
+
+
+
+\## 4. Count Failed Logons by Account
+
+
+
+```spl
+
+index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
+
+| stats count by Account\\\_Name
+
+| sort - count
+
+```
+
+
+
+\## 5. Threshold Detection — 3 Failures in 5 Minutes
+
+
+
+```spl
+
+index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
+
+| bin \\\_time span=5m
+
+| stats count by \\\_time, host, Account\\\_Name
+
+| where count >= 3
+
+| sort - count
+
+```
+
+
+
+\## 6. Review Failed and Successful Logons
+
+
+
+```spl
+
+index=wineventlog sourcetype="WinEventLog:Security" (EventCode=4625 OR EventCode=4624)
+
+| table \\\_time host EventCode Account\\\_Name TargetUserName Source\\\_Network\\\_Address IpAddress Logon\\\_Type
+
+| sort \\\_time
+
+```
+
+
+
+\## 7. Detection Explanation
+
+
+
+The detection groups Windows failed authentication events into five-minute intervals.
+
+
+
+Three or more failed authentication attempts against the same host and account during the interval trigger the detection.
+
+
+
+This is a basic threshold detection and may generate false positives from legitimate users entering incorrect passwords.
+
+
+
+
+
 ### Incident 02 – Authentication Anomaly
 
 Correlate failed and successful logon events to investigate suspicious authentication activity.
@@ -353,17 +469,29 @@ No real accounts, production systems, public targets, or destructive malware are
 
 ## Project Status
 
-* \[ ] Splunk configuration verification
-* \[ ] Windows log ingestion
-* \[ ] Linux log ingestion
-* \[ ] Incident 01 – Brute-force investigation
-* \[ ] Incident 02 – Authentication anomaly
-* \[ ] Incident 03 – PowerShell investigation
-* \[ ] Incident 04 – Linux authentication investigation
-* \[ ] Dashboard development
-* \[ ] Alert configuration
-* \[ ] Final incident report
-* \[ ] VMware environment validation
-* \[ ] Project screenshots
-* \[ ] GitHub documentation review
+\- \[x] Splunk configuration verification
+
+\- \[x] Windows log ingestion
+
+\- \[x] Linux log ingestion
+
+\- \[x] Incident 01 – Brute-force investigation
+
+\- \[x] Incident 02 – Authentication anomaly
+
+\- \[x] Incident 03 – PowerShell investigation
+
+\- \[x] Incident 04 – Linux authentication investigation
+
+\- \[x] Dashboard development
+
+\- \[ ] Alert configuration
+
+\- \[ ] Final incident report
+
+\- \[x] VMware environment validation
+
+\- \[x] Project screenshots
+
+\- \[ ] GitHub documentation review
 
