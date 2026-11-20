@@ -1,4 +1,4 @@
-# SOC Alert Investigation \& Incident Response Lab
+# SOC Alert Investigation & Incident Response Lab
 
 ## Project Overview
 
@@ -6,492 +6,292 @@ This project demonstrates a hands-on Security Operations Center (SOC) investigat
 
 The lab simulates security events in isolated Windows and Linux virtual machines, collects endpoint logs using Splunk Universal Forwarders, and investigates suspicious activities using Splunk Search Processing Language (SPL).
 
-The objective is to practice the responsibilities of a SOC Analyst L1, including alert triage, log analysis, event correlation, incident investigation, determining True Positive or False Positive verdicts, and documenting findings.
+The objective is to practice SOC Analyst L1 responsibilities, including alert triage, log analysis, event correlation, incident investigation, identifying potential false positives, determining incident verdicts, and documenting findings.
 
 ## Objectives
 
-* Build a multi-source SIEM monitoring environment.
-* Collect Windows and Linux security logs.
-* Investigate authentication-related security events.
-* Identify suspicious login patterns.
-* Investigate suspicious PowerShell activity.
-* Analyze Linux authentication logs.
-* Develop Splunk searches for security investigations.
-* Create security alerts and dashboards.
-* Document investigation evidence and incident verdicts.
-* Practice incident response recommendations.
+- Build a multi-source SIEM monitoring environment.
+- Collect Windows and Linux security logs.
+- Investigate authentication-related security events.
+- Identify suspicious login patterns.
+- Investigate suspicious PowerShell activity.
+- Analyze Linux authentication logs.
+- Develop Splunk searches using SPL.
+- Create security dashboards and detection alerts.
+- Document investigation evidence and findings.
+- Practice basic incident response recommendations.
 
 ## Lab Environment
 
-|Component|Technology|
-|-|-|
-|Virtualization|VMware Workstation|
-|SIEM|Splunk Enterprise|
-|SIEM Server|Kali Linux|
-|Windows Log Source|Windows Server 2022|
-|Linux Log Source|Kali Linux|
-|Log Collection|Splunk Universal Forwarder|
-|Investigation Language|Splunk SPL|
-|Environment|Isolated virtual lab|
+| Component | Technology |
+|---|---|
+| Virtualization | VMware Workstation |
+| SIEM | Splunk Enterprise 10.0.1 |
+| SIEM Server | Kali Linux |
+| Windows Log Source | Windows Server 2022 |
+| Linux Log Source | Kali Linux |
+| Log Collection | Splunk Universal Forwarder |
+| Investigation Language | Splunk SPL |
+| Environment | Isolated virtual lab |
 
 ## Lab Architecture
 
-The lab consists of a Splunk server receiving security logs from Windows and Linux virtual machines.
+The lab consists of a Splunk Enterprise server receiving security logs from Windows and Linux virtual machines through Splunk Universal Forwarders.
 
-The collected events are analyzed using Splunk searches, dashboards, and alerts.
+Collected events are analyzed using Splunk searches, statistics, dashboards, and scheduled alerts.
+
+The environment was configured and tested within VMware Workstation using isolated virtual machines.
 
 ## Investigations
 
-### Incident 01 – Windows Brute-Force Detection
+### Incident 01 – Windows Authentication Failure Investigation
 
-Investigate multiple failed Windows logon attempts and identify suspicious authentication patterns.
+**Incident Type:** Suspicious Authentication Activity
 
-\# Incident 01 — Windows Brute-Force Detection
+**Severity:** Medium – Lab Assessment
 
+**Status:** Investigated
 
+#### Objective
 
-\## 1. Overview
+Investigate Windows Security Event ID 4625, identify repeated authentication failures, and determine whether the observed activity represents suspicious authentication behavior.
 
-
-
-\*\*Incident Name:\*\* Windows Authentication Failure Investigation
-
-
-
-\*\*Incident Type:\*\* Suspicious Authentication / Brute-Force Detection
-
-
-
-\*\*Severity:\*\* Medium (Lab Assessment)
-
-
-
-\*\*Status:\*\* Investigated
-
-
-
-\*\*Environment:\*\* Isolated VMware Workstation Lab
-
-
-
-\## 2. Objective
-
-
-
-Investigate Windows Security Event ID 4625, identify repeated authentication failures, and determine whether the activity represents suspicious authentication behavior.
-
-
-
-\## 3. Lab Environment
-
-
+#### Lab Environment
 
 | Component | Details |
-
 |---|---|
-
 | SIEM | Splunk Enterprise 10.0.1 |
-
 | Endpoint | Windows Server 2022 |
-
 | Log Source | Windows Security Log |
-
 | Event ID | 4625 |
-
 | Index | wineventlog |
-
 | Sourcetype | WinEventLog:Security |
-
 | Forwarder | Splunk Universal Forwarder |
-
 | Environment | Isolated VMware Workstation |
 
+#### Event Description
 
+Windows Security Event ID 4625 records a failed logon attempt.
 
-\## 4. Alert Description
+Repeated authentication failures may indicate:
 
+- Brute-force attempts
+- Password guessing
+- Incorrect credentials
+- Misconfigured applications or services
+- Unauthorized authentication attempts
 
+#### Detection Logic
 
-Windows Event ID 4625 records a failed logon attempt.
+The investigation used a threshold-based detection approach.
 
+- Event ID: 4625
+- Threshold: 3 or more failed logons
+- Detection window: 5 minutes for the initial threshold investigation
+- Grouping: Host and account
 
+#### Investigation Findings
 
-Repeated authentication failures against an account may indicate:
+The investigation identified repeated failed authentication events on the Windows endpoint.
 
+The observed events included the following:
 
+- Windows Security Event ID 4625
+- Failure reason: Unknown user name or bad password
+- Logon types observed: 2 (Interactive) and 7 (Unlock)
+- Source addresses included localhost addresses such as `127.0.0.1` and `::1`
+- Multiple authentication failures were identified through Splunk statistics and threshold searches.
 
-\- Brute-force attempts
+The source addresses indicate local authentication activity on the endpoint rather than a confirmed external network-based attack.
 
-\- Password guessing
+The detection search was also used to identify account and source-address combinations with three or more failed authentication events within the configured search window.
 
-\- Incorrect credentials
+#### Analyst Verdict
 
-\- Misconfigured applications or services
+**Verdict: Inconclusive – Suspicious Authentication Activity Observed**
 
-\- Unauthorized authentication attempts
+The investigation identified multiple failed authentication attempts within a short period.
 
+However, the observed localhost source addresses and logon types may be associated with legitimate user activity, incorrect credentials, or other local authentication processes.
 
+The available evidence does not conclusively establish that a brute-force attack occurred.
 
-\## 5. Detection Logic
+Further investigation would be required to determine whether the activity was authorized or malicious.
 
+#### Recommended Response
 
+- Verify the authentication activity with the account owner.
+- Review the affected account and endpoint.
+- Check for successful logons following the failures.
+- Review related Event IDs 4624 and 4648.
+- Investigate additional authentication events and timestamps.
+- Escalate suspicious activity to Tier 2 if necessary.
+- Follow the organization's incident response procedures.
 
-The investigation uses a threshold-based detection:
+#### Lessons Learned
 
+- Event ID 4625 is useful for identifying failed authentication attempts.
+- Splunk can centralize Windows Security logs.
+- Threshold-based searches help identify repeated authentication failures.
+- Detection results require investigation before classifying an incident.
+- Source addresses, account names, and logon types provide useful investigation context.
 
+---
 
-\- Event ID: 4625
+### Incident 02 – Authentication Anomaly Investigation
 
-\- Threshold: 3 or more failed logons
+**Objective:** Correlate failed and successful logon events to investigate suspicious authentication activity.
 
-\- Time window: 5 minutes
+The investigation focused on reviewing authentication events and identifying patterns involving failed and successful logons.
 
-\- Grouping: Host and account
+The objective was to understand the authentication sequence and determine whether the observed activity required further investigation.
 
+**Skills Practiced:**
 
+- Windows authentication event analysis
+- Event correlation
+- Failed and successful logon investigation
+- Account activity review
+- Basic alert triage
 
-\## 6. Investigation Queries
+---
 
+### Incident 03 – Suspicious PowerShell Activity Investigation
 
+**Objective:** Investigate controlled PowerShell execution and identify relevant endpoint telemetry.
 
-See `spl-queries.md` for the complete SPL queries used during the investigation.
+The investigation involved examining PowerShell-related activity in the Windows environment and reviewing relevant logs to understand command execution behavior.
 
+**Skills Practiced:**
 
+- Windows endpoint investigation
+- PowerShell activity analysis
+- Security event log review
+- Identifying suspicious command execution
+- Investigative documentation
 
-\## 7. Investigation Findings
-
-
-
-\*\*Affected Host:\*\* WIN-TU878J0IPCG
-
-
-
-\*\*Target Account:\*\* WIN-TU878J0IPCGS / DELL
-
-
-
-\*\*Failed Authentication Count:\*\* 4 events
-
-
-
-\*\*Time Window:\*\* November 19, 2026, approximately 10:15:33 AM – 10:15:42 AM
-
-
-
-\*\*Source IP:\*\* 127.0.0.1 (Localhost)
-
-
-
-\*\*Logon Types Observed:\*\* 7 (Unlock) and 2 (Interactive)
-
-
-
-\*\*Failure Reason:\*\* Unknown user name or bad password
-
-
-
-\*\*Successful Logon Following Failures:\*\* Not confirmed
-
-
-
-\### Findings Summary
-
-
-
-Splunk returned four Windows Security Event ID 4625 events.
-
-
-
-Three failed authentication events occurred within approximately nine seconds on November 19, 2026. These events were associated with the same endpoint and the source network address 127.0.0.1.
-
-
-
-The observed logon types included Logon Type 7 (Unlock) and Logon Type 2 (Interactive).
-
-
-
-The failure reason reported was "Unknown user name or bad password."
-
-
-
-The repeated failures exceeded the configured detection threshold of three or More events within five minutes.
-
-
-
-The source address 127.0.0.1 indicates that the authentication activity originated locally on the endpoint rather than from an external network IP address.
-
-
-
-\## 8. Evidence
-
-
-
-Screenshots are stored in the `screenshots` directory.
-
-
-
-\- Windows Event Viewer Event ID 4625
-
-\- Splunk raw authentication events
-
-\- Failed authentication count
-
-\- Threshold detection results
-
-\- Investigation details
-
-\- Splunk statistics showing account, source address, logon type, and failure reason
-
-
-
-\## 9. Analyst Verdict
-
-
-
-\*\*Verdict:\*\* Inconclusive — Suspicious Authentication Activity Observed
-
-
-
-\*\*Reasoning:\*\*
-
-
-
-The investigation identified multiple failed authentication attempts within a short period, exceeding the configured detection threshold.
-
-
-
-However, the source IP address was 127.0.0.1, indicating local authentication activity. The observed logon types and failure reason could be associated with legitimate user activity, incorrect credentials, or suspicious behavior.
-
-
-
-Based on the available evidence, the activity cannot be conclusively classified as a brute-force attack. Further investigation would be required to determine whether the activity was authorized or malicious.
-
-
-
-\## 10. Recommended Response
-
-
-
-Depending on the investigation findings:
-
-
-
-\- Verify the activity with the account owner.
-
-\- Review the source IP and workstation.
-
-\- Check for successful authentication after failures.
-
-\- Review additional authentication events.
-
-\- Investigate related Event IDs such as 4624 and 4648.
-
-\- Escalate suspicious activity to Tier 2.
-
-\- Follow the organization's incident response procedure.
-
-
-
-\## 11. Lessons Learned
-
-
-
-\- Windows Event ID 4625 is useful for detecting authentication failures.
-
-\- Splunk can centralize Windows Security logs.
-
-\- Threshold-based detection can identify repeated failed logons.
-
-\- Detection results require investigation before classifying an incident.
-
-\- Context is necessary to distinguish suspicious activity from legitimate errors.
-
-\- Source IP addresses and logon types provide valuable investigation context.
-
-
-
-\## 12. Lab Safety
-
-
-
-This activity was performed on Windows Server 2022 inside an isolated VMware Workstation lab using authorized test accounts and controlled authentication attempts.
-
-
-
-\# Incident 01 — SPL Queries
-
-
-
-\## 1. Search Failed Authentication Events
-
-
-
-```spl
-
-index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
-
-```
-
-
-
-\## 2. Display Failed Authentication Event Details
-
-
-
-```spl
-
-index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
-
-| table \\\_time host Account\\\_Name TargetUserName Source\\\_Network\\\_Address IpAddress Logon\\\_Type Failure\\\_Reason
-
-| sort - \\\_time
-
-```
-
-
-
-\## 3. Count Failed Logons by Host
-
-
-
-```spl
-
-index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
-
-| stats count by host
-
-```
-
-
-
-\## 4. Count Failed Logons by Account
-
-
-
-```spl
-
-index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
-
-| stats count by Account\\\_Name
-
-| sort - count
-
-```
-
-
-
-\## 5. Threshold Detection — 3 Failures in 5 Minutes
-
-
-
-```spl
-
-index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
-
-| bin \\\_time span=5m
-
-| stats count by \\\_time, host, Account\\\_Name
-
-| where count >= 3
-
-| sort - count
-
-```
-
-
-
-\## 6. Review Failed and Successful Logons
-
-
-
-```spl
-
-index=wineventlog sourcetype="WinEventLog:Security" (EventCode=4625 OR EventCode=4624)
-
-| table \\\_time host EventCode Account\\\_Name TargetUserName Source\\\_Network\\\_Address IpAddress Logon\\\_Type
-
-| sort \\\_time
-
-```
-
-
-
-\## 7. Detection Explanation
-
-
-
-The detection groups Windows failed authentication events into five-minute intervals.
-
-
-
-Three or more failed authentication attempts against the same host and account during the interval trigger the detection.
-
-
-
-This is a basic threshold detection and may generate false positives from legitimate users entering incorrect passwords.
-
-
-
-
-
-### Incident 02 – Authentication Anomaly
-
-Correlate failed and successful logon events to investigate suspicious authentication activity.
-
-### Incident 03 – Suspicious PowerShell Activity
-
-Investigate controlled PowerShell execution and identify relevant endpoint telemetry.
+---
 
 ### Incident 04 – Linux Authentication Investigation
 
-Analyze Linux authentication logs and investigate suspicious login activity.
+**Objective:** Analyze Linux authentication logs and investigate suspicious login activity.
+
+The investigation focused on Linux authentication telemetry and identifying relevant login-related events.
+
+**Skills Practiced:**
+
+- Linux authentication log analysis
+- SSH authentication investigation
+- Failed login identification
+- Linux endpoint monitoring
+- Basic incident investigation
+
+---
+
+## Splunk Monitoring and Dashboards
+
+The lab includes Splunk monitoring dashboards designed to provide visibility into endpoint activity and authentication events.
+
+The dashboards include:
+
+- Windows failed logon monitoring
+- Windows successful logon monitoring
+- Windows authentication failure trends
+- Linux log source activity
+- Monitored host overview
+- Splunk data source inventory
+
+The dashboards help visualize security events and support investigation and monitoring activities.
+
+## Alert Configuration
+
+### Alert 01 – Windows Multiple Failed Logons
+
+**Alert Name:** Windows Multiple Failed Logons
+
+**Alert Type:** Scheduled
+
+**Schedule:** Hourly, at 15 minutes past the hour
+
+**Detection Source:** Windows Security Event ID 4625
+
+**Threshold:** 3 or more failed authentication events
+
+**Search Window:** Last 60 minutes
+
+**Severity:** Medium
+
+**Trigger Action:** Add to Triggered Alerts
+
+**Status:** Configured and Enabled
+
+#### Detection Query
+
+```spl
+index=wineventlog EventCode=4625 earliest=-60m latest=now
+| stats count by host Account_Name Source_Network_Address
+| where count >= 3
+```
+
+#### Detection Validation
+
+The detection search was manually executed in Splunk and returned results containing account, host, source-address, and failed-authentication counts.
+
+The results included multiple combinations meeting the configured threshold of three or more events.
+
+The scheduled alert was saved and enabled in Splunk.
+
+**Scheduled alert firing is pending verification.** The manually executed search validates the detection query, but scheduled execution has not yet been confirmed.
+
+#### Evidence
+
+- `07-windows-failed-logon-alert-configuration.png`
+- `08-windows-failed-logon-detection-results.png`
 
 ## Skills Demonstrated
 
-* SIEM monitoring
-* Splunk Enterprise
-* Log ingestion and analysis
-* Windows Security Event Logs
-* Linux authentication logs
-* Splunk SPL
-* Authentication investigation
-* Event correlation
-* Alert triage
-* Incident documentation
-* Basic incident response
-* Git and GitHub documentation
+- SIEM monitoring
+- Splunk Enterprise
+- Log ingestion and analysis
+- Windows Security Event Logs
+- Linux authentication logs
+- Splunk Search Processing Language (SPL)
+- Authentication investigation
+- Event correlation
+- Alert triage
+- Detection logic validation
+- Dashboard development
+- Incident documentation
+- Basic incident response
+- Git and GitHub documentation
 
 ## Safety
 
-All security simulations are performed using authorized virtual machines in a controlled laboratory environment.
+All security simulations were performed using authorized virtual machines in a controlled laboratory environment.
 
-No real accounts, production systems, public targets, or destructive malware are used.
+No real accounts, production systems, public targets, or destructive malware were used.
 
 ## Project Status
 
-\- \[x] Splunk configuration verification
+- [x] Splunk configuration verification
+- [x] Windows log ingestion
+- [x] Linux log ingestion
+- [x] Incident 01 – Windows authentication failure investigation
+- [x] Incident 02 – Authentication anomaly investigation
+- [x] Incident 03 – PowerShell activity investigation
+- [x] Incident 04 – Linux authentication investigation
+- [x] Dashboard development
+- [x] Detection search validation
+- [x] VMware environment validation
+- [x] Project screenshots
+- [x] GitHub documentation
+- [x] Alert 01 configuration
+- [ ] Scheduled alert firing verification
+- [ ] Final incident report review
+- [ ] Final GitHub repository review
 
-\- \[x] Windows log ingestion
+## Conclusion
 
-\- \[x] Linux log ingestion
+This project provided practical experience in building a SIEM monitoring environment, collecting endpoint logs, investigating authentication events, analyzing suspicious activity, developing detection searches, creating dashboards, configuring alerts, and documenting investigation findings.
 
-\- \[x] Incident 01 – Brute-force investigation
-
-\- \[x] Incident 02 – Authentication anomaly
-
-\- \[x] Incident 03 – PowerShell investigation
-
-\- \[x] Incident 04 – Linux authentication investigation
-
-\- \[x] Dashboard development
-
-\- \[ ] Alert configuration
-
-\- \[ ] Final incident report
-
-\- \[x] VMware environment validation
-
-\- \[x] Project screenshots
-
-\- \[ ] GitHub documentation review
-
+The lab demonstrates foundational SOC Analyst L1 skills in security monitoring, log analysis, alert triage, investigation, and basic incident response within a controlled virtual environment.
