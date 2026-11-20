@@ -222,10 +222,12 @@ No real accounts, production systems, public targets, or destructive malware wer
 - [x] Incident 01 findings and verdict documented
 - [x] Incident 01 SPL corrected for observed multivalue account extraction
 - [x] Manually validate corrected failed-logon detection search
-- [ ] Verify scheduled alert firing
+- [x] Alert configured, saved, enabled; alert-configuration and detection-result screenshots reviewed
+- [ ] Scheduled notification/trigger firing verified (not required to claim alert configuration completed)
 - [ ] Complete evidence-backed investigations for Incidents 02–04
 - [x] Validate dashboard functionality and screenshots
-- [ ] Final project review and report polish
+- [x] Portfolio/documentation status review completed
+- [ ] Optional final screenshot bundle organized in repository and report polish
 
 ## Conclusion
 
