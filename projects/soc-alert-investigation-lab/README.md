@@ -119,6 +119,8 @@ The investigation focused on Linux authentication telemetry and identifying rele
 
 ## Splunk Monitoring and Dashboards
 
+**Status: Dashboard created and documented.** Dashboard screenshots and documentation were previously committed. Final review of the dashboard panels and screenshot evidence remains part of portfolio quality review.
+
 The lab includes Splunk monitoring dashboards designed to provide visibility into endpoint activity and authentication events.
 
 The dashboards include:
@@ -152,7 +154,7 @@ The dashboards help visualize security events and support investigation and moni
 
 **Trigger Action:** Add to Triggered Alerts
 
-**Status:** Configuration documented; scheduled firing not verified
+**Status:** Alert configured and saved; manual detection search validated; scheduled firing not yet verified
 
 #### Detection Query
 
@@ -169,7 +171,7 @@ The detection search was manually executed in Splunk and returned results contai
 
 The results included multiple combinations meeting the configured threshold of three or more events.
 
-The scheduled alert was saved and enabled in Splunk.
+The scheduled alert was saved and enabled in Splunk. The detection search was manually run and validated against the available event data.
 
 **Scheduled alert firing is pending verification.** The manually executed search validates the detection query, but scheduled execution has not yet been confirmed.
 
@@ -177,6 +179,16 @@ The scheduled alert was saved and enabled in Splunk.
 
 - `07-windows-failed-logon-alert-configuration.png`
 - `08-windows-failed-logon-detection-results.png`
+
+## Project Completion Checklist
+
+- [x] Multi-source log ingestion verified
+- [x] Incident 01 investigated and documented using raw evidence
+- [x] Dashboard created and documented
+- [x] Alert configured and detection search manually validated
+- [ ] Scheduled alert firing verified
+- [ ] Incidents 02–04 completed with evidence-backed findings
+- [ ] Final screenshots and full project review
 
 ## Skills Demonstrated
 
