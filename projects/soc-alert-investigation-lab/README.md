@@ -214,7 +214,7 @@ The failure reason reported was "Unknown user name or bad password."
 
 
 
-The repeated failures exceeded the configured detection threshold of three events within five minutes.
+The repeated failures exceeded the configured detection threshold of three or More events within five minutes.
 
 
 
