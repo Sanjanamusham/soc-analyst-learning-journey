@@ -226,17 +226,25 @@ No real accounts, production systems, public targets, or destructive malware wer
 
 ## Project Status
 
+### Core Portfolio — Completed
+
 - [x] Splunk log collection confirmed for Kali syslog and Windows Application, Security, and System logs
 - [x] Incident 01 raw Event ID 4625 evidence reviewed
 - [x] Incident 01 findings and verdict documented
 - [x] Incident 01 SPL corrected for observed multivalue account extraction
-- [x] Manually validate corrected failed-logon detection search
-- [x] Alert configured, saved, enabled; alert-configuration and detection-result screenshots reviewed
-- [ ] Scheduled notification/trigger firing verified (not required to claim alert configuration completed)
-- [ ] Complete evidence-backed investigations for Incidents 02–04
-- [x] Validate dashboard functionality and screenshots
-- [x] Portfolio/documentation status review completed
-- [ ] Optional final screenshot bundle organized in repository and report polish
+- [x] Failed-logon detection search manually validated
+- [x] Alert configured, saved, and enabled
+- [x] Alert configuration and detection-result screenshots reviewed
+- [x] Dashboard functionality and screenshots reviewed
+- [x] Core project documentation reviewed and aligned with evidence
+
+### Optional Extensions — Not Blocking Core Completion
+
+- Scheduled notification/trigger delivery verification (alert configuration is completed; separate delivery evidence was not captured)
+- Evidence-backed case studies for Incidents 02–04 (current documents are investigation guides)
+- Optional final screenshot bundle organization and additional report polish
+
+**Core portfolio status: Completed.** Optional extensions are not marked as pending project requirements.
 
 ## Conclusion
 
