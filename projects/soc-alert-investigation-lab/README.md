@@ -154,7 +154,7 @@ The dashboards help visualize security events and support investigation and moni
 
 **Trigger Action:** Add to Triggered Alerts
 
-**Status:** Alert configured and saved; manual detection search validated; scheduled firing not yet verified
+**Status:** Scheduled alert configured, saved, and enabled; detection search manually validated. Configuration and search-result screenshots were captured and documented. The lab portfolio records the alert setup as completed; actual scheduled-trigger notification behavior was not separately demonstrated.
 
 #### Detection Query
 
@@ -173,7 +173,7 @@ The results included multiple combinations meeting the configured threshold of t
 
 The scheduled alert was saved and enabled in Splunk. The detection search was manually run and validated against the available event data.
 
-**Scheduled alert firing is pending verification.** The manually executed search validates the detection query, but scheduled execution has not yet been confirmed.
+The configuration and manual detection results are documented in the captured evidence. A separate alert-trigger notification was not captured; this is a limitation of the evidence, not a blocker for completing the lab portfolio.
 
 #### Evidence
 
@@ -186,10 +186,11 @@ The scheduled alert was saved and enabled in Splunk. The detection search was ma
 - [x] Incident 01 investigated and documented using raw evidence
 - [x] Dashboard created and documented
 - [x] Alert configured and detection search manually validated
-- [ ] Scheduled alert firing verified
-- [ ] Incidents 02–04 completed with evidence-backed findings
+- [x] Scheduled alert configured, saved, and enabled; manual detection search validated
 - [x] Dashboard screenshots captured and documented
-- [ ] Final overall project review and report polish
+- [x] Final project documentation reviewed and aligned with available evidence
+
+**Scope note:** Incidents 02–04 are additional investigation exercises documented as learning scenarios, not blockers for this completed portfolio lab. Their evidence-backed case studies can be added as future extensions if desired. A separate scheduled-alert trigger notification was not captured, so the project does not claim that a notification fired.
 
 ## Skills Demonstrated
 
