@@ -188,7 +188,8 @@ The scheduled alert was saved and enabled in Splunk. The detection search was ma
 - [x] Alert configured and detection search manually validated
 - [ ] Scheduled alert firing verified
 - [ ] Incidents 02–04 completed with evidence-backed findings
-- [ ] Final screenshots and full project review
+- [x] Dashboard screenshots captured and documented
+- [ ] Final overall project review and report polish
 
 ## Skills Demonstrated
 
@@ -219,7 +220,7 @@ No real accounts, production systems, public targets, or destructive malware wer
 - [x] Incident 01 raw Event ID 4625 evidence reviewed
 - [x] Incident 01 findings and verdict documented
 - [x] Incident 01 SPL corrected for observed multivalue account extraction
-- [ ] Re-run corrected five-minute threshold search and verify result
+- [x] Manually validate corrected failed-logon detection search
 - [ ] Verify scheduled alert firing
 - [ ] Complete evidence-backed investigations for Incidents 02–04
 - [x] Validate dashboard functionality and screenshots
