@@ -1,256 +1,115 @@
-\# Incident 01 — Windows Failed Logon Investigation
+# Incident 01 — Windows Failed Logon Investigation
 
-
-
-\## 1. Incident Overview
-
-
+## 1. Incident Overview
 
 | Field | Details |
-
 |---|---|
-
 | Incident Name | Windows Authentication Failure Investigation |
-
-| Incident Type | Suspicious Authentication Activity |
-
-| Severity | Medium - Lab Assessment |
-
-| Status | Investigated |
-
+| Incident Type | Failed Authentication Activity |
+| Severity | Low / Inconclusive (lab assessment) |
+| Status | Evidence reviewed; verdict documented |
 | SIEM | Splunk Enterprise |
-
 | Endpoint | Windows Server 2022 |
-
 | Event ID | 4625 |
-
 | Index | wineventlog |
-
+| Sourcetype | WinEventLog:Security |
 | Environment | Isolated VMware Workstation Lab |
 
+## 2. Objective
 
+Investigate Windows Security Event ID 4625, identify failed logon activity, examine the target account, source address, logon type, and failure reason, and determine whether the evidence supports a brute-force conclusion.
 
-\## 2. Objective
+## 3. Data Collection Validation
 
+Splunk log collection was verified using:
 
+```spl
+index=*
+| stats count by index, sourcetype, host
+```
 
-Investigate repeated Windows failed logon events and determine whether the activity indicates suspicious authentication behavior.
+Observed sources during the validation search:
 
+| Index | Sourcetype | Host | Events |
+|---|---|---|---:|
+| main | syslog | kali | 5,462 |
+| wineventlog | WinEventLog:Application | WIN-TU878J0IPCG | 128 |
+| wineventlog | WinEventLog:Security | WIN-TU878J0IPCG | 482 |
+| wineventlog | WinEventLog:System | WIN-TU878J0IPCG | 673 |
 
+These results confirm that Splunk was receiving Kali syslog and Windows Application, Security, and System events during the selected time range.
 
-The investigation uses Windows Security Event ID 4625.
+## 4. Event Description
 
+Windows Security Event ID 4625 records a failed logon. A failure may result from incorrect credentials, account issues, application/service configuration, or malicious password guessing. A 4625 event alone does not establish an attack.
 
+## 5. Verified Findings
 
-\## 3. Event Description
+The raw search returned **8 Event ID 4625 records** in the selected Last 24 Hours range.
 
-
-
-Windows Security Event ID 4625 records a failed logon attempt.
-
-
-
-Repeated authentication failures may indicate:
-
-
-
-\- Brute-force attempts.
-
-\- Password guessing.
-
-\- Incorrect credentials.
-
-\- Misconfigured applications or services.
-
-\- Unauthorized authentication attempts.
-
-
-
-\## 4. Detection Logic
-
-
-
-The investigation uses a threshold-based detection.
-
-
-
-| Detection Parameter | Value |
-
+| Finding | Verified observation |
 |---|---|
+| Affected host | WIN-TU878J0IPCG |
+| Failed target accounts | soctest (5 events); DELL (3 events) |
+| Source addresses | ::1 and 127.0.0.1 |
+| Source interpretation | IPv6 and IPv4 loopback; local host |
+| Logon types | 2 (Interactive); 7 (Unlock) |
+| Failure reason | Unknown user name or bad password |
+| Status | 0xC000006D |
+| Sub-status | 0xC000006A (incorrect password) |
+| Caller process | C:\\Windows\\System32\\svchost.exe |
+| External source IP identified | No |
 
-| Event ID | 4625 |
+### Important field-extraction note
 
-| Threshold | 3 or more failures |
+The Splunk-extracted `Account_Name` and `Account_Domain` fields contain multiple values in these 4625 records: the Subject account and the account for which the logon failed. Queries that group directly on these multivalue fields can inflate or duplicate statistics.
 
-| Time Window | 5 minutes |
+For this investigation, the raw Event ID 4625 messages were reviewed. The failed target account was the second value in the extracted `Account_Name` field for the events observed. Use `mvindex(Account_Name,1)` as the failed target account only after validating this extraction order against the raw event.
 
-| Grouping | Host and account |
+The raw-event count (8) is the verified total. Statistics that summed to more than 8 were not treated as unique-event counts.
 
+## 6. Analysis
 
+The events were generated on the local Windows host. Both `127.0.0.1` and `::1` are loopback addresses, not external attacker addresses. The observed logon types were interactive (2) and unlock (7). The failure sub-status `0xC000006A` indicates an incorrect password.
 
-The detection search identifies repeated authentication failures within the configured time interval.
+The events are consistent with local authentication failures, such as incorrect credentials or local authentication activity. The caller process `svchost.exe` is a legitimate Windows process name, but the process name alone does not identify the specific service responsible.
 
+The available evidence does not establish a remote brute-force attack. The underlying cause of the local failures remains unconfirmed.
 
+## 7. Analyst Verdict
 
-\## 5. Investigation Findings
+**Verdict: Inconclusive — Local Failed Authentication Activity Observed**
 
+Eight failed-logon events were identified in the selected 24-hour search. The failed target accounts were `soctest` (5 events) and `DELL` (3 events). The source addresses were loopback addresses and the events reported an incorrect-password sub-status.
 
+No external source IP or confirmed malicious activity was identified in the reviewed evidence. The activity should not be labelled a confirmed brute-force attack.
 
-The Splunk investigation identified multiple failed authentication events.
+## 8. Recommended Follow-up
 
+- Verify whether the failed logons were expected in the lab.
+- Review nearby successful logon events (Event ID 4624).
+- Check whether any account lockout events (Event ID 4740) occurred.
+- If further investigation is required, correlate the timestamps with relevant Windows service or application activity.
+- Escalate only if additional evidence indicates unauthorized activity.
 
+## 9. Lessons Learned
 
-The findings included:
+- Event ID 4625 is useful for investigating failed authentication.
+- Raw event messages help validate extracted fields.
+- Multivalue fields can inflate Splunk statistics if grouped without normalization.
+- Loopback addresses indicate local activity, not a remote source.
+- A detection is an investigation lead; it is not a final incident verdict.
 
+## 10. Evidence
 
+Evidence reviewed in Splunk:
+- Data source inventory search.
+- Event ID 4625 search.
+- Raw failed-logon event details.
+- Statistics by failed target account.
 
-\- Affected host: WIN-TU878J0IPCG
+Screenshots should be added to the lab screenshots directory if they are retained as portfolio evidence.
 
-\- Observed accounts: DELL and WIN-TU878J0IPCGS
+## 11. Lab Safety
 
-\- Source addresses: 127.0.0.1 and ::1
-
-\- Event ID: 4625
-
-\- Logon types observed: 2 and 7
-
-\- Failure reason: Unknown user name or bad password
-
-
-
-The investigation identified repeated failed logons exceeding the configured threshold.
-
-
-
-The observed source addresses were loopback addresses, indicating local authentication activity on the endpoint rather than an external source IP address.
-
-
-
-\## 6. Analysis
-
-
-
-Repeated failed authentication attempts can indicate suspicious activity.
-
-
-
-However, the observed authentication failures originated from local loopback addresses.
-
-
-
-The activity may be associated with:
-
-
-
-\- Incorrect credentials.
-
-\- Local interactive authentication.
-
-\- User account unlock attempts.
-
-\- Local application authentication.
-
-\- Potentially suspicious authentication behavior.
-
-
-
-The available evidence does not conclusively establish that the activity was a brute-force attack.
-
-
-
-\## 7. Analyst Verdict
-
-
-
-\*\*Verdict: Inconclusive — Suspicious Authentication Activity Observed\*\*
-
-
-
-The detection identified multiple failed logon events within a short period.
-
-
-
-The threshold was exceeded, but the source addresses were local loopback addresses.
-
-
-
-Additional investigation would be required to determine whether the activity was legitimate or malicious.
-
-
-
-\## 8. Recommended Response
-
-
-
-A SOC Analyst should:
-
-
-
-1\. Review the affected account.
-
-2\. Verify whether the activity was expected.
-
-3\. Review the source workstation.
-
-4\. Investigate successful logons before and after the failures.
-
-5\. Review related authentication events.
-
-6\. Check for other suspicious activity on the endpoint.
-
-7\. Escalate if suspicious behavior cannot be explained.
-
-
-
-\## 9. Lessons Learned
-
-
-
-\- Event ID 4625 is useful for investigating authentication failures.
-
-\- Threshold-based detections identify repeated activity.
-
-\- Source addresses provide important investigation context.
-
-\- Detection results require analyst validation.
-
-\- Local authentication failures should not automatically be classified as external brute-force attacks.
-
-\- Context is necessary to determine the correct incident verdict.
-
-
-
-\## 10. Evidence
-
-
-
-Evidence is maintained in the incident screenshots directory.
-
-
-
-The evidence includes:
-
-
-
-\- Windows Event Viewer Event ID 4625.
-
-\- Splunk failed authentication events.
-
-\- Authentication statistics.
-
-\- Threshold detection results.
-
-\- Investigation details.
-
-
-
-\## 11. Lab Safety
-
-
-
-This investigation was performed using authorized Windows virtual machines in an isolated VMware Workstation environment.
-
-
-
-No production systems or unauthorized accounts were targeted.
-
+This investigation was performed in authorized virtual machines in an isolated VMware Workstation lab. No production systems or unauthorized accounts were targeted.
