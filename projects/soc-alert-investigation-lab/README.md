@@ -154,7 +154,7 @@ The dashboards help visualize security events and support investigation and moni
 
 **Trigger Action:** Add to Triggered Alerts
 
-**Status:** Scheduled alert configured, saved, and enabled; detection search manually validated. Configuration and search-result screenshots were captured and documented. The lab portfolio records the alert setup as completed; actual scheduled-trigger notification behavior was not separately demonstrated.
+**Status: Configuration completed.** The scheduled alert was configured, saved, and enabled. The detection search was manually validated, and configuration/results screenshots were captured. Scheduled notification/trigger firing is an optional additional verification and is not required to claim alert configuration completed.
 
 #### Detection Query
 
@@ -173,24 +173,33 @@ The results included multiple combinations meeting the configured threshold of t
 
 The scheduled alert was saved and enabled in Splunk. The detection search was manually run and validated against the available event data.
 
-The configuration and manual detection results are documented in the captured evidence. A separate alert-trigger notification was not captured; this is a limitation of the evidence, not a blocker for completing the lab portfolio.
+The configuration and manual detection results are documented in the captured evidence. A separate scheduled alert-trigger notification was not captured. The project claims alert configuration and manual detection validation—not notification delivery.
 
 #### Evidence
 
 - `07-windows-failed-logon-alert-configuration.png`
 - `08-windows-failed-logon-detection-results.png`
 
-## Project Completion Checklist
+## Project Completion Checklist — Core Portfolio Scope
 
 - [x] Multi-source log ingestion verified
 - [x] Incident 01 investigated and documented using raw evidence
-- [x] Dashboard created and documented
-- [x] Alert configured and detection search manually validated
-- [x] Scheduled alert configured, saved, and enabled; manual detection search validated
-- [x] Dashboard screenshots captured and documented
-- [x] Final project documentation reviewed and aligned with available evidence
+- [x] Incident 01 SPL corrected for observed multivalue extraction
+- [x] Failed-logon detection search manually validated
+- [x] Scheduled alert configured, saved, and enabled
+- [x] Dashboard created, reviewed, and screenshots captured
+- [x] Alert configuration and detection-result screenshots captured
+- [x] Project documentation reviewed and aligned with evidence
 
-**Scope note:** Incidents 02–04 are additional investigation exercises documented as learning scenarios, not blockers for this completed portfolio lab. Their evidence-backed case studies can be added as future extensions if desired. A separate scheduled-alert trigger notification was not captured, so the project does not claim that a notification fired.
+**Core portfolio status: Completed.**
+
+### Optional Extensions (Not Required for Core Completion)
+
+- Scheduled alert trigger/notification delivery verification (configuration is completed; delivery was not separately captured)
+- Additional evidence-backed investigations: Incident 02 authentication correlation, Incident 03 PowerShell, and Incident 04 Linux authentication
+- Optional screenshot bundle organization or additional report polish
+
+These extensions are intentionally not marked as unchecked blockers. Incident 02–04 documentation currently serves as investigation guides unless separate evidence/findings are added.
 
 ## Skills Demonstrated
 
@@ -231,4 +240,4 @@ No real accounts, production systems, public targets, or destructive malware wer
 
 ## Conclusion
 
-This project is a hands-on SOC learning lab. Confirmed work includes multi-source log ingestion and an evidence-backed Windows failed-authentication investigation. Remaining detections, dashboards, and investigations should be marked complete only after their behavior and evidence are verified in the lab.
+This core portfolio project is completed: multi-source log ingestion, an evidence-backed Windows failed-authentication investigation, dashboard creation and review, alert configuration, manual detection-search validation, and documentation are complete. Optional extensions may add scheduled notification-delivery evidence and further Incident 02–04 case studies, but they do not block the core project completion claim.
