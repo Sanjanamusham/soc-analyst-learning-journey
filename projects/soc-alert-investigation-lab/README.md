@@ -119,7 +119,7 @@ The investigation focused on Linux authentication telemetry and identifying rele
 
 ## Splunk Monitoring and Dashboards
 
-**Status: Dashboard created and documented.** Dashboard screenshots and documentation were previously committed. Final review of the dashboard panels and screenshot evidence remains part of portfolio quality review.
+**Status: Completed and reviewed.** Dashboard was created, screenshots were captured/shared, and dashboard documentation is present in the repository. No dashboard recreation is required.
 
 The lab includes Splunk monitoring dashboards designed to provide visibility into endpoint activity and authentication events.
 
@@ -132,7 +132,7 @@ The dashboards include:
 - Monitored host overview
 - Splunk data source inventory
 
-The dashboards help visualize security events and support investigation and monitoring activities.
+The dashboards help visualize security events and support investigation and monitoring activities. Dashboard creation, screenshots, and the documented dashboard work are considered completed based on the previously shared evidence.
 
 ## Alert Configuration
 
@@ -222,8 +222,8 @@ No real accounts, production systems, public targets, or destructive malware wer
 - [ ] Re-run corrected five-minute threshold search and verify result
 - [ ] Verify scheduled alert firing
 - [ ] Complete evidence-backed investigations for Incidents 02–04
-- [ ] Validate dashboard functionality and screenshots
-- [ ] Final project review
+- [x] Validate dashboard functionality and screenshots
+- [ ] Final project review and report polish
 
 ## Conclusion
 
