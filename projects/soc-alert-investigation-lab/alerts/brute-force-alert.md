@@ -1,230 +1,71 @@
+# Windows Brute-Force Detection Alert
 
+## 1. Overview
 
-\# Windows Brute-Force Detection Alert
+This detection identifies repeated Windows authentication failures that may warrant investigation. It uses Windows Security Event ID 4625 and is an investigation trigger—not confirmation of a brute-force attack.
 
-
-
-\## 1. Overview
-
-
-
-This alert is designed to identify repeated Windows authentication failures that may indicate brute-force or password-guessing activity.
-
-
-
-The detection uses Windows Security Event ID 4625 and a threshold-based approach.
-
-
-
-\## 2. Alert Details
-
-
+## 2. Alert Details
 
 | Field | Details |
-
 |---|---|
-
 | Alert Name | Windows Multiple Failed Logons |
-
 | Detection Type | Authentication Monitoring |
-
 | SIEM | Splunk Enterprise |
-
 | Log Source | Windows Security Logs |
-
 | Event ID | 4625 |
-
-| Severity | Medium |
-
+| Severity | Medium (investigation) |
 | Detection Threshold | 3 or more failed logons |
-
 | Time Window | 5 minutes |
+| Status | SPL documented; scheduled firing requires validation |
 
-| Status | Lab Detection |
+## 3. Detection Objective
 
+Identify repeated failed authentication attempts within a short period. Possible causes include password guessing, incorrect passwords, account lockout activity, and misconfigured applications or services.
 
+## 4. Field Extraction Consideration
 
-\## 3. Detection Objective
+In the observed Windows 4625 events, Splunk extracted the Subject account and failed target account into multivalue `Account_Name` and `Account_Domain` fields. Grouping directly by `Account_Name` can produce misleading results.
 
+The SPL below uses the second extracted account value as the failed target account, based on the raw events reviewed in this lab. Confirm this order against raw events if the event format or field extraction changes.
 
-
-Identify repeated failed authentication attempts within a short period.
-
-
-
-Repeated failed logons may indicate:
-
-
-
-\- Brute-force attacks.
-
-\- Password guessing.
-
-\- Incorrect passwords.
-
-\- Account lockout attempts.
-
-\- Application authentication failures.
-
-
-
-\## 4. Detection Logic
-
-
-
-The detection groups Windows failed logon events by:
-
-
-
-\- Time interval.
-
-\- Host.
-
-\- Account.
-
-
-
-The alert identifies groups containing three or more failed logon events within a five-minute interval.
-
-
-
-\## 5. SPL Detection Query
-
-
+## 5. SPL Detection Query
 
 ```spl
-
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
-
-| bin \_time span=5m
-
-| stats count by \_time, host, Account\_Name
-
+| eval Failed_Account=mvindex(Account_Name,1)
+| bin _time span=5m
+| stats count by _time host Failed_Account Source_Network_Address
 | where count >= 3
-
 | sort - count
-
 ```
 
+## 6. Trigger Condition
 
+- Windows Security Event ID 4625.
+- Three or more failed logons in a five-minute bucket.
+- Grouped by time bucket, host, failed target account, and source address.
 
-\## 6. Alert Trigger Condition
+When the threshold is met, review the account, source, logon type, failure reason, and nearby successful logons before assigning a verdict.
 
+## 7. Analyst Investigation
 
+1. Identify the affected host and failed target account.
+2. Review the source IP address.
+3. Examine timestamps and failure frequency.
+4. Check logon type and failure status/sub-status.
+5. Search for successful logons before or after the failures.
+6. Review related events and endpoint context.
+7. Determine whether the activity is expected, suspicious, or inconclusive.
+8. Document evidence and escalate if warranted.
 
-The detection condition is:
+## 8. False Positive Considerations
 
+Possible legitimate causes include incorrect password entry, forgotten passwords, password changes, account lockout activity, misconfigured applications, and services using outdated credentials.
 
+## 9. Analyst Verdict
 
-\- Windows Event ID 4625.
+The detection is an investigation trigger. It does not automatically confirm brute-force activity. Validate the target account, host, source address, and surrounding telemetry.
 
-\- Three or more failed logons.
+## 10. Lab Environment
 
-\- Events grouped into five-minute intervals.
-
-\- Events grouped by host and account.
-
-
-
-When the threshold is met, the activity should be reviewed by the analyst.
-
-
-
-\## 7. Analyst Investigation
-
-
-
-When an alert is generated:
-
-
-
-1\. Identify the affected host.
-
-2\. Identify the targeted account.
-
-3\. Review the source IP address.
-
-4\. Check the number of failed attempts.
-
-5\. Review the authentication failure reason.
-
-6\. Check for successful logons before or after the failures.
-
-7\. Review related security events.
-
-8\. Determine whether the activity is legitimate or suspicious.
-
-
-
-\## 8. False Positive Considerations
-
-
-
-Possible legitimate causes include:
-
-
-
-\- Incorrect password entry.
-
-\- Forgotten passwords.
-
-\- Password changes.
-
-\- Account lockout activity.
-
-\- Misconfigured applications.
-
-\- Automated services using outdated credentials.
-
-
-
-The alert should not automatically be classified as a confirmed brute-force attack.
-
-
-
-\## 9. Analyst Verdict
-
-
-
-The alert is an investigation trigger.
-
-
-
-The analyst must validate the activity using the affected account, host, source address, authentication events, and surrounding activity.
-
-
-
-\## 10. Recommended Response
-
-
-
-If suspicious authentication activity is confirmed:
-
-
-
-\- Escalate the incident according to the SOC procedure.
-
-\- Notify the appropriate team.
-
-\- Review the affected account.
-
-\- Investigate the source system.
-
-\- Consider account protection measures according to organizational policy.
-
-\- Document investigation findings.
-
-
-
-\## 11. Lab Environment
-
-
-
-This detection is developed and tested in an isolated VMware Workstation lab using authorized virtual machines.
-
-
-
-No production systems are monitored or targeted.
-
-
-
+This detection is intended for authorized security monitoring and investigation in an isolated VMware Workstation lab.
